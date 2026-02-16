@@ -50,8 +50,9 @@ We compared a standard MLP (which ignores graph structure) against a GCN (which 
 
 The project generates a t-SNE visualization of the node embeddings from the hidden layer (shown above).
 
-1.  **Homophily**: You can observe that nodes (dots) corresponding to the same social factions (colors) are clustered tightly together. This indicates the model has learned that members of the same faction are "similar" in the graph structure.
-2.  **Structural Learning**: Even though the GCN was only trained on **4 labeled nodes** (one per class), the embeddings for the *entire* graph naturally separated into 4 distinct clusters. This demonstrates that the GCN used the graph topology (who connects to whom) to propagate the label information to the rest of the network, effectively solving the problem for the unlabeled nodes.
+1.  **Partial Separation**: Unlike a perfect classification, the visualization shows that while some nodes of the same color are moving closer together, there is still significant overlap and scattering. This reflects the **58% accuracy** source—the model has started to learn the structure, but it hasn't fully disentangled the complex social dynamics of all 34 members based on just 4 training labels.
+2.  **Comparison to Randomness**: In a completely untreated model (or the MLP baseline), these points would likely be distributed entirely randomly with no color correlation. Here, we see localized groups forming (e.g., the purple and green nodes showing some affinity), which explains why the GCN still outperforms the MLP (58% vs 44%), even if it isn't perfect.
+3.  **Small Dataset Challenges**: The "scattering" also highlights a challenge with very small datasets like Karate Club (34 nodes). t-SNE can struggle to create stable global clusters with so few data points, often resulting in a sparse-looking plot.
 
 ### Conclusion
 
