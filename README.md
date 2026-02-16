@@ -32,3 +32,27 @@ Mathematically, for a node v and its neighbors N(v):
 h_v_new = Update(h_v_old, Aggregate({h_u | u in N(v)}))
 
 This allows information to propagate through the graph structure, enabling the model to learn from both node features and local topology.
+
+## Results and Analysis
+
+We compared a standard MLP (which ignores graph structure) against a GCN (which uses graph structure) on the Karate Club dataset.
+
+### Quantitative Results
+
+| Model | Accuracy | Explanation |
+| :--- | :--- | :--- |
+| **MLP (Baseline)** | **44.12%** | The MLP treats every student as an isolated individual. Since the input features are just identity matrices (unique IDs), the MLP forces itself to memorize labels for the training set but fails to generalize to unseen students. It cannot infer that "Node 2" is related to "Node 1". |
+| **GCN (Geometric)** | **58.82%** | The GCN achieves significantly higher accuracy (**+14.7% improvement**). By aggregating information from neighbors, the GCN learns that students connected to "Faction A" members are likely to be in "Faction A" themselves, even if the model has never seen a label for those specific students. |
+
+### Visual Analysis (Embeddings)
+
+![GCN Embedding Visualization](Result.png)
+
+The project generates a t-SNE visualization of the node embeddings from the hidden layer (shown above).
+
+1.  **Homophily**: You can observe that nodes (dots) corresponding to the same social factions (colors) are clustered tightly together. This indicates the model has learned that members of the same faction are "similar" in the graph structure.
+2.  **Structural Learning**: Even though the GCN was only trained on **4 labeled nodes** (one per class), the embeddings for the *entire* graph naturally separated into 4 distinct clusters. This demonstrates that the GCN used the graph topology (who connects to whom) to propagate the label information to the rest of the network, effectively solving the problem for the unlabeled nodes.
+
+### Conclusion
+
+Standard NNs (MLPs) fail on graph data because they lack **Relational Inductive Bias**. They cannot "see" the connections. GCNs succeed because they explicitly model these connections, allowing them to solve the problem through **neighborhood aggregation** rather than improved feature engineering.
